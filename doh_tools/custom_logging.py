@@ -1,6 +1,6 @@
+#%%
 import logging
 import os
-import yaml
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
