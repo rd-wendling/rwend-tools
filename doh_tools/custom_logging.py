@@ -47,6 +47,8 @@ def set_logging(
         bh.setLevel(email_level)
         logger.addHandler(bh)
 
+    return logger
+
 
 def send_log_over_email(logger_obj, fromaddr, toaddr, subject, body=''):
     for handler in logger_obj.handlers:
