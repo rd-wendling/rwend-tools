@@ -54,17 +54,17 @@ pip install doh_tools
 ### utils
   - This module contains assorted functions
   - html_tables_to_yaml()
-    - Purpose:<br>
-        Generate Data Specification yaml from html.
-    
-        This function takes an html file or markdown file with html-style content and creates a data specification yaml file of the same name as the input file. 
-        Not much can be gleaned from an html table with regards to metadata, but table name, column name, and the actual data values should be consistently captured.
-    
-        Parameters:<br>
-            - input_file: Path to the html or markdown input file
-    
-        Returns:<br>
-            - Data Specification: A data specification as a yaml file
+      - Purpose:<br>
+          Generate Data Specification yaml from html.
+      
+          This function takes an html file or markdown file with html-style content and creates a data specification yaml file of the same name as the input file. 
+          Not much can be gleaned from an html table with regards to metadata, but table name, column name, and the actual data values should be consistently captured.
+      
+          Parameters:<br>
+              - input_file: Path to the html or markdown input file
+      
+          Returns:<br>
+              - Data Specification: A data specification as a yaml file
     - Usage:
      ```python
       from doh_tools.utils import html_tables_to_yaml
