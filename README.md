@@ -52,7 +52,7 @@ pip install doh_tools
         )
     ```
 ### utils
-  - This module helps contains assorted functions
+  - This module contains assorted functions
   - html_tables_to_yaml()
     - Purpose:<br>
         Generate Data Specification yaml from html.
