@@ -1,4 +1,5 @@
 # rwend-tools
+A collection of helper functions designed to consolidate some useful utilities I often use, and to gain experience with publishing packages. This package includes various functions for common tasks such as data manipulation, file handling, logging and more.
 ## Installation Instructions
 ```bash
 pip install rwend_tools
