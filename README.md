@@ -12,14 +12,14 @@ pip install rwend_tools
 │   └── utils.py
 ```
 
-## Detailed Function Documentation and Usage Guide
-### custom_logging
+## Usage Guide
+### 1. custom_logging
   - This module helps create custom logging and email notifications
   - Prerequisites:
     - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module.
   - Usage:
     ```python
-    from doh_tools.custom_logging import set_logging, send_log_over_email
+    from rwend_tools.custom_logging import set_logging, send_log_over_email
     
     log_email = 'user.email@gmail.com'
     process_id = '001'
@@ -51,23 +51,18 @@ pip install rwend_tools
             subject=subject_error
         )
     ```
-### utils
-  - This module contains assorted functions
-  - html_tables_to_yaml()
-      - Purpose:<br>
-          Generate Data Specification yaml from html.
-      
-          This function takes an html file or markdown file with html-style content and creates a data specification yaml file of the same name as the input file. 
-          Not much can be gleaned from an html table with regards to metadata, but table name, column name, and the actual data values should be consistently captured.
-      
-          Parameters:<br>
-              - input_file: Path to the html or markdown input file
-      
-          Returns:<br>
-              - Data Specification: A data specification as a yaml file
-    - Usage:
+### 2. google_helpers
+  - This module helps makes working with Google Cloud Platform easier.
+  - Usage:
+    ```python
+    import rwend_tools.google_helpers as gh
+    
+    ```
+### 3. utils
+  - This module contains assorted functions 
+  - Usage:
      ```python
-      from doh_tools.utils import html_tables_to_yaml
+      from rwend_tools.utils import html_tables_to_yaml
       
       input_path = 'sample_markdown.md'
       html_tables_to_yaml(input_path)
