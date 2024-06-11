@@ -16,7 +16,7 @@ pip install rwend_tools
 ### 1. custom_logging
   - This module helps create custom logging and email notifications
   - Prerequisites:
-    - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module.
+    - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module. Without this you can still use this to create log files but won't be able to send log files over email.
   - Usage:
     ```python
     from rwend_tools.custom_logging import set_logging, send_log_over_email
