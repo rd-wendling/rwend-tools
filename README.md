@@ -1,4 +1,5 @@
 # rwend-tools
+A collection of helper functions designed to consolidate some useful utilities I often use, and to gain experience with publishing packages. This package includes various functions for common tasks such as data manipulation, file handling, logging and more.
 ## Installation Instructions
 ```bash
 pip install rwend_tools
@@ -12,14 +13,16 @@ pip install rwend_tools
 │   └── utils.py
 ```
 
-## Detailed Function Documentation and Usage Guide
-### custom_logging
+## Usage Guide
+### 1. custom_logging
   - This module helps create custom logging and email notifications
   - Prerequisites:
-    - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module.
+    - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module. Without this you can still use this to create log files but won't be able to send log files over email.
   - Usage:
     ```python
-    from doh_tools.custom_logging import set_logging, send_log_over_email
+    import rwend_tools.utils as ru
+    import rwend_tools.google_helpers as rg
+    from rwend_tools.custom_logging import set_logging, send_log_over_email
     
     log_email = 'user.email@gmail.com'
     process_id = '001'
@@ -51,25 +54,3 @@ pip install rwend_tools
             subject=subject_error
         )
     ```
-### utils
-  - This module contains assorted functions
-  - html_tables_to_yaml()
-      - Purpose:<br>
-          Generate Data Specification yaml from html.
-      
-          This function takes an html file or markdown file with html-style content and creates a data specification yaml file of the same name as the input file. 
-          Not much can be gleaned from an html table with regards to metadata, but table name, column name, and the actual data values should be consistently captured.
-      
-          Parameters:<br>
-              - input_file: Path to the html or markdown input file
-      
-          Returns:<br>
-              - Data Specification: A data specification as a yaml file
-    - Usage:
-     ```python
-      from doh_tools.utils import html_tables_to_yaml
-      
-      input_path = 'sample_markdown.md'
-      html_tables_to_yaml(input_path)
-     ```
-    
