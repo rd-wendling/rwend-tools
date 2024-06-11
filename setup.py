@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(
-    name='doh-tools',
-    version='1.2',
-    packages=['doh_tools'],
+    name='rwend-tools',
+    version='1.0',
+    packages=['rwend_tools'],
 )
