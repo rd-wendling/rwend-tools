@@ -19,6 +19,8 @@ pip install rwend_tools
     - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module. Without this you can still use this to create log files but won't be able to send log files over email.
   - Usage:
     ```python
+    import rwend_tools.utils as ru
+    import rwend_tools.google_helpers as rg
     from rwend_tools.custom_logging import set_logging, send_log_over_email
     
     log_email = 'user.email@gmail.com'
@@ -51,20 +53,3 @@ pip install rwend_tools
             subject=subject_error
         )
     ```
-### 2. google_helpers
-  - This module helps makes working with Google Cloud Platform easier.
-  - Usage:
-    ```python
-    import rwend_tools.google_helpers as gh
-    
-    ```
-### 3. utils
-  - This module contains assorted functions 
-  - Usage:
-     ```python
-      from rwend_tools.utils import html_tables_to_yaml
-      
-      input_path = 'sample_markdown.md'
-      html_tables_to_yaml(input_path)
-     ```
-    
