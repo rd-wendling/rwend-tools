@@ -1,12 +1,12 @@
-# doh-tools
+# rwend-tools
 ## Installation Instructions
 ```bash
-pip install doh_tools
+pip install rwend_tools
 ```
 ## Package Structure
 ```bash
 .
-├── doh_tools
+├── rwend_tools
 │   ├── custom_logging.py
 │   ├── google_helpers.py
 │   └── utils.py
