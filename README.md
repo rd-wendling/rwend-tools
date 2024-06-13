@@ -48,37 +48,50 @@ pip install rwend_tools
     - gmail_app_pwd needs to be set/defined as an environmental variable. This should be an app password you obtain from google if you want to use the email functionality of this module. Without this you can still use this to create log files but won't be able to send log files over email.
   - Usage:
     ```python
-    import rwend_tools.utils as ru
-    import rwend_tools.google_helpers as rg
-    from rwend_tools.custom_logging import set_logging, send_log_over_email
+    import rwend_tools.custom_logging as rc
+    import os
     
-    log_email = 'user.email@gmail.com'
+    # Set up email configuration 
+    email_config = {
+        'capacity': 100_000,
+        'fromaddr': 'example_sender@gmail.com',
+        'toaddr': 'example_recipient@gmail.com',
+        'subject': 'Example Subject',
+        'smtp_server': 'smtp.gmail.com',
+        'smtp_port': 587,
+        'login': 'example_sender@gmail.com',
+        'password': os.environ['gmail_app_pwd']
+    }
+    
+    # Initialize logger
+    logger = rc.configure_logging(log_email=True, email_config=email_config)
+    
+    # Helps keep me organized, can track a log email to a scheduled run or a folder name that matches these
     process_id = '001'
     process_name = 'Test'
-
+    
     subject_success = f'Success -- {process_id} -- {process_name} Ran'
-    subject_error   = f'Error -- {process_id} -- {process_name} Failed'
+    subject_error = f'Error -- {process_id} -- {process_name} Failed'
     
-    logger = set_logging(log_console=False, log_email=True)
-    logger.info('Test')
-    
+    # Set up one email for successful runs, one for if we have any errors
+    # Only changing subject, but can have errors send to/from other emails if desired
     try:
-        logger.info(f'First line of logging')
-        logger.info(f'Second line of logging')
-        logger.info(f'Third line of logging')
+        logger.info('First line of logging')
+        logger.info('Second line of logging')
+        logger.info('Third line of logging')
     
-        send_log_over_email(
+        rc.send_log_over_email(
             logger,
-            fromaddr=log_email,
-            toaddr=log_email,
+            fromaddr=email_config['fromaddr'],
+            toaddr=email_config['toaddr'],
             subject=subject_success
         )
     except Exception as e:
-        logger.info(f'Process failed with error: {e}')
-        send_log_over_email(
+        logger.error(f'Process failed with error: {e}')
+        rc.send_log_over_email(
             logger,
-            fromaddr=log_email,
-            toaddr=log_email,
+            fromaddr=email_config['fromaddr'],
+            toaddr=email_config['toaddr'],
             subject=subject_error
         )
     ```
