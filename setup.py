@@ -9,9 +9,11 @@ setup(
     install_requires=[
         'pyyaml',
         'googlemaps',
-        'google-cloud-secret-manager'
+        'google-cloud-secret-manager',
+        'numpy',
+        'us',
+        'scipy'
     ],
-    # Other metadata
     author='Ryan Wendling',
     url='https://github.com/rd-wendling/rwend-tools',
 )
