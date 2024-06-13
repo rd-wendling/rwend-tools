@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rwend_tools',
-    version='1.5',
+    version='1.6',
     packages=['rwend_tools'],
     install_requires=[
         'pyyaml',
