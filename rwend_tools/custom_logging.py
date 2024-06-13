@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart  
 from logging.handlers import BufferingHandler  
 
-# Define a custom logging handler that buffers log records and sends them via email
+# Custom logging handler that buffers log records and sends them via email
 class EmailBufferingHandler(BufferingHandler):
     # Initialize the handler with email configuration and buffering capacity
     def __init__(self, capacity, fromaddr, toaddr, subject, smtp_server, smtp_port, login, password):
@@ -30,7 +30,7 @@ class EmailBufferingHandler(BufferingHandler):
                 self.handleError(None)  
             self.buffer = []  # Clear the buffer after sending
 
-    # Send an email with the specified body content
+
     def _send_email(self, body):
         msg = MIMEMultipart()  
         msg['From'] = self.fromaddr  
