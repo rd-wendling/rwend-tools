@@ -1,100 +1,91 @@
 #%%
-import logging
-import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from logging.handlers import BufferingHandler
+import logging  
+import os 
+import smtplib  
+from email.mime.text import MIMEText  
+from email.mime.multipart import MIMEMultipart  
+from logging.handlers import BufferingHandler  
 
-logger = logging.getLogger()
+# Define a custom logging handler that buffers log records and sends them via email
+class EmailBufferingHandler(BufferingHandler):
+    # Initialize the handler with email configuration and buffering capacity
+    def __init__(self, capacity, fromaddr, toaddr, subject, smtp_server, smtp_port, login, password):
+        super().__init__(capacity)  # Initialize the base class with the capacity
+        self.fromaddr = fromaddr  
+        self.toaddr = toaddr  
+        self.subject = subject  
+        self.smtp_server = smtp_server  
+        self.smtp_port = smtp_port  
+        self.login = login  
+        self.password = password  
+        self.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))  # Set the log format
 
-def set_logging(
-    log_console=True,
-    console_level='DEBUG',
-    log_file=True,
-    log_folder='logs',
-    log_file_name='log.log',
-    file_level='DEBUG',
-    log_email=False,
-    email_level='DEBUG',
-    logger_name=None
-):
-    if logger_name:
-        logger = logging.getLogger(logger_name)
-    else:
-        logger = logging.getLogger()
-
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    logger.setLevel('DEBUG')
-
-    if log_file:
-        if not os.path.exists(log_folder):
-            os.mkdir(log_folder)
-        log_path = os.path.join(log_folder, log_file_name)
-        fh = logging.FileHandler(log_path)
-        fh.setLevel(file_level)
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-
-    if log_console:
-        ch = logging.StreamHandler()
-        ch.setLevel(console_level)
-        ch.setFormatter(formatter)
-        logger.addHandler(ch)
-
-    if log_email:
-        bh = BufferingSMTPHandler(1_000_000)
-        bh.setLevel(email_level)
-        logger.addHandler(bh)
-
-    return logger
-
-
-def send_log_over_email(logger_obj, fromaddr, toaddr, subject, body=''):
-    for handler in logger_obj.handlers:
-        if isinstance(handler, BufferingSMTPHandler):
-            logger.debug('Sending log over email')
-            handler.flush(fromaddr, toaddr, subject, body=body)
-
-
-class BufferingSMTPHandler(BufferingHandler):
-    def __init__(self, capacity):
-        logging.handlers.BufferingHandler.__init__(self, capacity)
-        self.setFormatter(logging.Formatter('%(asctime)s - %(levelname)-5s - %(message)s'))
-
-    def flush(self, fromaddr='', toaddrs='', subject='', body=''):
-        if len(self.buffer) > 0:
+    # Flush the buffer and send the buffered log records via email
+    def flush(self):
+        if self.buffer:  # Check if there are any log records in the buffer
             try:
-                if body != '':
-                    body += '\n\n'
-                body += 'Log Below: \n\n'
-                for record in self.buffer:
-                    s = self.format(record)
-                    body += s + '\n'
-                send_email(fromaddr, toaddrs, subject, body)
-            except:
-                self.handleError(record)
+                body = '\n'.join(self.format(record) for record in self.buffer)  # Format the log records
+                self._send_email(body)  # Send the formatted log records via email
+            except Exception as e:
+                self.handleError(None)  
+            self.buffer = []  # Clear the buffer after sending
 
-        self.buffer = []
+    # Send an email with the specified body content
+    def _send_email(self, body):
+        msg = MIMEMultipart()  
+        msg['From'] = self.fromaddr  
+        msg['To'] = self.toaddr  
+        msg['Subject'] = self.subject  
 
+        msg.attach(MIMEText(body, 'plain'))  # Attach the log records as plain text to the email
+        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:  
+            server.starttls() 
+            server.login(self.login, self.password)  
+            server.sendmail(self.fromaddr, self.toaddr.split(','), msg.as_string()) 
 
+# Configure logging with options for console, file, and email logging
+def configure_logging(log_console=True, console_level=logging.DEBUG,
+                      log_file=True, log_folder='logs', log_file_name='log.log', file_level=logging.DEBUG,
+                      log_email=False, email_level=logging.DEBUG, email_config=None):
+    logger = logging.getLogger()  
+    logger.setLevel(logging.DEBUG)  
 
-def send_email(fromaddr, toaddr, subject, body, port=587, server='smtp.gmail.com'):
-    
-    smtp_server = server
-    sender_password = os.environ['gmail_app_pwd']
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')  
 
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['From'] = fromaddr
-    msg['To'] = toaddr
+    if log_console: 
+        console_handler = logging.StreamHandler()  
+        console_handler.setLevel(console_level)  
+        console_handler.setFormatter(formatter) 
+        logger.addHandler(console_handler)  
 
-    body = f'{body} \n\n Caution: This email has been automatically generated. Please do not reply to this email.'
-    body_html = '<p>' + body.replace('\n', '<br>') + '</p>'
-    body_message = MIMEText(body_html, 'html')
-    msg.attach(body_message)
+    if log_file:  
+        # Check if the log folder exists, create it if not
+        if not os.path.exists(log_folder):  
+            os.makedirs(log_folder)  
+        file_handler = logging.FileHandler(os.path.join(log_folder, log_file_name))  
+        file_handler.setLevel(file_level) 
+        file_handler.setFormatter(formatter)  
+        logger.addHandler(file_handler)  
 
-    with smtplib.SMTP(smtp_server, port) as server:
-        server.starttls()
-        server.login(fromaddr, sender_password)
-        server.sendmail(fromaddr, toaddr.split(','), msg.as_string())
+    if log_email and email_config:  
+        email_handler = EmailBufferingHandler(
+            capacity=email_config.get('capacity', 1000),  
+            fromaddr=email_config['fromaddr'], 
+            toaddr=email_config['toaddr'],  
+            subject=email_config['subject'],  
+            smtp_server=email_config.get('smtp_server', 'smtp.gmail.com'),  
+            smtp_port=email_config.get('smtp_port', 587),  
+            login=email_config['login'],  
+            password=email_config['password']  
+        )
+        email_handler.setLevel(email_level)  
+        logger.addHandler(email_handler)  
+
+    return logger  
+
+# Send the buffered log records via email
+def send_log_over_email(logger_obj, fromaddr, toaddr, subject, body=''):
+    for handler in logger_obj.handlers:  
+        if isinstance(handler, EmailBufferingHandler):  
+            handler.subject = subject 
+            handler.flush()  # Flush the buffer and send the email
