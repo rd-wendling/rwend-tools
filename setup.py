@@ -12,7 +12,8 @@ setup(
         'google-cloud-secret-manager',
         'numpy',
         'us',
-        'scipy'
+        'scipy',
+        'pandas'
     ],
     author='Ryan Wendling',
     url='https://github.com/rd-wendling/rwend-tools',
